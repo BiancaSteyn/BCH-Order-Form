@@ -74,7 +74,7 @@
   <div class="container">
     <main class="card" role="main">
       <header>
-        <div class="logo"><img src="image/bee.png" alt="Bee's Craft Hive logo" /></div>
+        <div class="logo"><img src="Images/bee.png" alt="Bee's Craft Hive logo" /></div>
         <div>
           <h1>Welcome to Bee's Craft Hive</h1>
           <p class="lead">Handmade crochet, vinyl & 3D printed goodies — let’s place your order!</p>
@@ -163,17 +163,18 @@
 
             <h4 style="margin-top:12px;margin-bottom:6px">Selected item preview</h4>
             <div class="item-preview" id="itemPreviewWrap" aria-live="polite">
-              <img id="itemPreview" src="image/big-items.png" alt="Selected item preview">
+              <img id="itemPreview" src="Images/small-items.png" alt="Selected item preview">
               <div class="item-caption" id="itemCaption">Sample item</div>
               <div class="item-price" id="itemPrice">Price: To be confirmed</div>
             </div>
 
             <h4 style="margin-top:12px;margin-bottom:6px">Samples</h4>
             <div class="mini-gallery" id="miniGallery">
-              <div class="mini"><img src="image/big-items.png" alt="crochet sample 1"></div>
-              <div class="mini"><img src="image/big-items.png" alt="crochet sample 2"></div>
-              <div class="mini"><img src="image/big-items.png" alt="vinyl sample"></div>
-              <div class="mini"><img src="image/big-items.png" alt="3D sample"></div>
+              <div class="mini"><img src="Images/small-items.png" alt="crochet sample 1"></div>
+              <div class="mini"><img src="Images/big-items.png" alt="crochet sample 2"></div>
+              <div class="mini"><img src="Images/sample_vinyl_1.jpg" alt="vinyl sample 1"></div>
+              <div class="mini"><img src="Images/sample_vinyl_2.jpg" alt="vinyl sample 2"></div>
+              <div class="mini"><img src="Images/3d-turtle-coaster.png" alt="3D sample"></div>
             </div>
 
             <div style="margin-top:12px">
@@ -223,7 +224,7 @@
       ]
     };
 
-    // mapping to your image filenames inside 'image/' (lowercase folder)
+    // mapping to your image filenames inside 'Images/' (capital I)
     const imageMap = {
       "Small amigurumi Bee": "bee.png",
       "Small amigurumi Penguin": "penguin.png",
@@ -232,7 +233,7 @@
       "Amigurumi Sunflower Fairy Doll": "sunflower-fairy-doll.png",
       "Big amigurumi Cow": "big-cow.png",
       "Big amigurumi Bear": "big-teddy.png"
-      // others will fallback to image/big-items.png
+      // others will fallback to Images/small-items.png
     };
 
     function formatR(n){
@@ -246,13 +247,10 @@
       const priceEl = document.getElementById('itemPrice');
       const unitEl = document.getElementById('unitPrice');
 
-      const baseFolder = 'image/';
-      const fallback = baseFolder + 'big-items.png';
+      const baseFolder = 'Images/';
+      const fallback = baseFolder + 'small-items.png';
 
-      // reset alt/tried
-      if(previewImg){
-        previewImg.dataset._tried = '';
-      }
+      if(previewImg){ previewImg.dataset._tried = ''; }
 
       if(!itemName){
         if(previewImg){ previewImg.src = fallback; previewImg.alt = 'Sample'; }
@@ -270,7 +268,7 @@
       if(mapped){
         if(previewImg){ previewImg.alt = itemName + ' preview'; previewImg.src = baseFolder + mapped; }
       } else {
-        // attempt slug-based items/ fallback (not required since you provided mapped files)
+        // attempt slug-based items/ fallback
         const slug = itemName.toString().toLowerCase().replace(/\s+/g,'_').replace(/[^\w\-]+/g,'').replace(/\_+/g,'_').replace(/^_+|_+$/g,'');
         const candidatePng = baseFolder + 'items/' + slug + '.png';
         const candidateJpg = baseFolder + 'items/' + slug + '.jpg';
@@ -294,13 +292,11 @@
       }
 
       // price display logic
-      // If unitPrice input has a numeric value, use it. Otherwise if catalog price exists show it, else To be confirmed.
       let shownPrice = null;
       const unitVal = unitEl && unitEl.value ? Number(unitEl.value) : null;
       if(!isNaN(unitVal) && unitVal !== null && unitVal !== 0){
         shownPrice = Number(unitVal);
       } else {
-        // try to find known catalog price
         const catKey = (document.getElementById('category') || {}).value;
         if(catKey && catalog[catKey]){
           const found = catalog[catKey].find(i => i.name === itemName);
@@ -338,7 +334,6 @@
 
       if(!categoryEl || !itemEl){ console.error('Missing selects'); return; }
 
-      // populate items for a category
       function populate(cat){
         itemEl.innerHTML = '';
         unitEl.value = '';
@@ -354,7 +349,6 @@
 
       categoryEl.addEventListener('change', function(e){ populate(e.target.value); preview.style.display = 'none'; });
 
-      // item selected: prefill unit and set preview & caption & price
       itemEl.addEventListener('change', function(){
         const cat = categoryEl.value;
         const sel = itemEl.value;
@@ -365,20 +359,16 @@
         setItemPreviewByName(sel);
       });
 
-      // vinyl per-cm compute and update preview price
       function computeVinylUnit(){
         const per = parseFloat(vinylPerCm.value);
         const w = parseFloat(vinylWidth.value);
         if(!isNaN(per) && !isNaN(w) && per>0 && w>0){
           const calc = per * w;
           unitEl.value = Number(calc).toFixed(2);
-          // update price under image
           const caption = document.getElementById('itemCaption').textContent || '';
           setItemPreviewByName(caption);
           return calc;
         }
-        // if not valid, clear unit & update price
-        // update preview price too
         const caption = document.getElementById('itemCaption').textContent || '';
         unitEl.value = '';
         setItemPreviewByName(caption);
@@ -386,7 +376,6 @@
       }
       if(vinylPerCm && vinylWidth){ vinylPerCm.addEventListener('input', computeVinylUnit); vinylWidth.addEventListener('input', computeVinylUnit); }
 
-      // cart handling
       let cart = [];
       function renderCart(){
         cartItemsEl.innerHTML = '';
@@ -548,3 +537,4 @@
   </script>
 </body>
 </html>
+
