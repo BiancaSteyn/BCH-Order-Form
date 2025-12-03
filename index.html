@@ -230,10 +230,10 @@
   </div>
 
   <script>
-    // === SET YOUR WHATSAPP NUMBER HERE (international format, no + or spaces) ===
-    const MY_NUMBER = '27635668069'; // e.g. 27825551234
+    // YOUR NUMBER (already set)
+    const MY_NUMBER = '27635668069';
 
-    // Inventory with pre-filled crochet prices (from your image)
+    // Inventory
     const catalog = {
       crochet: [
         {name:"Small amigurumi Bee", price:150},
@@ -263,9 +263,10 @@
       ]
     };
 
-    // Wait for DOM and use robust population handlers
+    // Wait for DOM and use robust handlers
     document.addEventListener('DOMContentLoaded', () => {
-      // DOM refs
+      console.log('DOM loaded — initializing script');
+      // refs
       const categoryEl = document.getElementById('category');
       const itemEl = document.getElementById('item');
       const qtyEl = document.getElementById('qty');
@@ -284,20 +285,23 @@
       const vinylPerCm = document.getElementById('vinylPerCm');
       const vinylWidth = document.getElementById('vinylWidth');
 
+      console.log('catalog keys:', Object.keys(catalog).join(', '));
       if (!categoryEl || !itemEl) {
-        console.error('Category or Item select not found. Check element IDs.');
+        console.error('Category or Item select NOT found. Check element IDs in HTML.');
+        alert('Setup error: required form elements not found. Open console for details.');
         return;
+      } else {
+        console.log('Found category and item selects');
       }
 
       let cart = [];
 
-      // helper: format currency
       function formatR(n){
         return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
       }
 
-      // populate item dropdown for category
       function populateItemsForCategory(cat) {
+        console.log('populateItemsForCategory:', cat);
         itemEl.innerHTML = '';
         unitEl.value = '';
         if (!cat || !catalog[cat]) {
@@ -316,18 +320,18 @@
           itemEl.appendChild(new Option(label, it.name));
         });
         if (vinylBox) vinylBox.style.display = (cat === 'vinyl') ? 'block' : 'none';
+        console.log(`populateItemsForCategory: added ${catalog[cat].length} items for "${cat}"`);
       }
 
-      // when category changes
       categoryEl.addEventListener('change', (e) => {
         populateItemsForCategory(e.target.value);
         preview.style.display = 'none';
       });
 
-      // when item changes, prefill unit price if available
       itemEl.addEventListener('change', () => {
         const cat = categoryEl.value;
         const selected = itemEl.value;
+        console.log('item changed ->', cat, selected);
         if (!cat || !selected) {
           unitEl.value = '';
           return;
@@ -337,7 +341,6 @@
         else unitEl.value = '';
       });
 
-      // render cart
       function renderCart(){
         cartItemsEl.innerHTML = '';
         if(cart.length === 0){
@@ -413,7 +416,6 @@
         priceNote.style.display = 'block';
       }
 
-      // Add to cart
       addBtn.addEventListener('click', function(){
         const category = categoryEl.value;
         const item = itemEl.value;
@@ -439,7 +441,6 @@
         cart.push({category,item,qty,unit,vinylCalc});
         renderCart();
 
-        // reset inputs
         qtyEl.value = '1';
         unitEl.value = '';
         vinylPerCm.value = '';
@@ -447,7 +448,6 @@
         preview.style.display = 'none';
       });
 
-      // Clear form controls
       clearBtn.addEventListener('click', function(){
         categoryEl.value = '';
         itemEl.innerHTML = '<option>Choose a category first</option>';
@@ -459,7 +459,6 @@
         preview.style.display = 'none';
       });
 
-      // Build message
       function buildMessage(){
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('custPhone').value.trim();
@@ -507,10 +506,9 @@
         return lines.filter(Boolean).join('\n');
       }
 
-      // Open WhatsApp
       function openWhatsApp(message){
         if(!MY_NUMBER || MY_NUMBER.includes('YOUR_NUMBER_HERE')){
-          alert('Please set your number in the script: replace MY_NUMBER = "YOUR_NUMBER_HERE" with your full international number (no + or spaces).');
+          alert('Please set your number in the script: replace MY_NUMBER = \"YOUR_NUMBER_HERE\" with your full international number (no + or spaces).');
           return;
         }
         const encoded = encodeURIComponent(message);
@@ -518,7 +516,6 @@
         window.open(url, '_blank');
       }
 
-      // copy message
       copyBtn.addEventListener('click', function(){
         const msg = buildMessage();
         preview.style.display = 'block';
@@ -531,7 +528,6 @@
         });
       });
 
-      // submit -> open whatsapp
       document.getElementById('orderForm').addEventListener('submit', function(e){
         e.preventDefault();
         const name = document.getElementById('name').value.trim();
@@ -563,9 +559,13 @@
         localStorage.setItem('bch_cart', JSON.stringify(cart));
       }, 1200);
 
-      // initial population if category had a value
-      if (categoryEl.value) populateItemsForCategory(categoryEl.value);
+      // ensure initial populate (in case category had value)
+      if (categoryEl.value) {
+        console.log('initial category value present:', categoryEl.value);
+        populateItemsForCategory(categoryEl.value);
+      }
     }); // DOMContentLoaded end
   </script>
 </body>
 </html>
+
