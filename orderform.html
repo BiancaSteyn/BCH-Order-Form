@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Order — Bee's Craft Hive</title>
+
+  <style>
+    :root{
+      --bg:#f8f3ff;
+      --panel:#ffffff;
+      --accent:#8b5adf;
+      --accent-2:#b899ff;
+      --muted:#6b6b6b;
+      --bee-yellow:#f7d34b;
+      --bee-yellow-soft:#fff5c2;
+      --card-radius:12px;
+      --shadow:0 8px 28px rgba(100,70,170,0.08);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(180deg, #fdfcff, var(--bg) 40%, var(--bg));
+      color:#222;
+      padding:18px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .container{max-width:1100px;margin:0 auto}
+    .card{
+      background:var(--panel);
+      border-radius:var(--card-radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      overflow:hidden;
+    }
+
+    header{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:48px;
+      height:48px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 22px rgba(139,90,223,0.12);
+      overflow:hidden;
+      flex-shrink:0;
+    }
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    @media (min-width:900px){
+      .logo{ width:64px; height:64px; }
+    }
+
+    h1{
+      margin:0;font-size:20px;color:var(--accent);
+      background:var(--bee-yellow-soft);display:inline-block;padding:4px 8px;border-radius:8px;
+    }
+    p.lead{margin:6px 0 12px;color:var(--muted);font-size:14px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:12px}
+    @media (min-width:920px){ .grid{grid-template-columns:1fr 360px} }
+
+    label{display:block;font-size:13px;color:#333;margin-bottom:6px}
+    select,input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(120,90,200,0.06);font-size:15px;margin-bottom:10px;background:white}
+    textarea{min-height:110px;resize:vertical}
+
+    .row{display:flex;gap:8px}
+    .row .col{flex:1}
+
+    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    button.primary{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:white;border:none;padding:12px 14px;border-radius:10px;cursor:pointer;font-weight:700;font-size:15px;
+      box-shadow:0 6px 18px rgba(139,90,223,0.12);
+    }
+    button.primary:hover{ box-shadow:0 10px 28px rgba(247,211,75,0.12); transform:translateY(-1px); }
+
+    button.ghost{
+      background:transparent;border:1px solid rgba(120,90,200,0.12);padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;
+    }
+    button.ghost:hover{ border-color:var(--bee-yellow); }
+
+    .cart{
+      border-radius:10px;padding:10px;background:#fff;
+      border:1px dashed var(--bee-yellow);
+    }
+    .cart-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #faf7fb}
+    .cart-row:last-child{border-bottom:0}
+    .cart-row .desc{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+    .total{font-weight:700;font-size:16px;margin-top:8px}
+
+    .preview{background:#fff;border-radius:8px;padding:12px;margin-top:12px;border:1px dashed rgba(120,90,200,0.06);font-family:"Courier New",monospace;white-space:pre-wrap;font-size:14px}
+
+    .vinyl-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    @media (max-width:420px){ .vinyl-controls{grid-template-columns:1fr} }
+
+    .mini-gallery{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .mini{width:72px;height:72px;border-radius:10px;background:var(--bee-yellow-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(120,90,200,0.06)}
+    .mini img{width:100%;height:100%;object-fit:cover}
+
+    .muted-note{font-size:13px;color:var(--muted);margin-top:10px}
+    .price-note{font-style:italic;font-size:13px;color:var(--muted);margin-top:6px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <main class="card" role="main">
+      <header>
+        <div class="logo">
+          <!-- Logo image file you provided -->
+          <img src="images/bch-logo.png" alt="Bee's Craft Hive logo" />
+        </div>
+
+        <div>
+          <h1>Welcome to Bee's Craft Hive</h1>
+          <p class="lead">Handmade crochet, vinyl & 3D printed goodies — let’s place your order!</p>
+        </div>
+      </header>
+
+      <form id="orderForm" autocomplete="on">
+        <div class="grid">
+          <!-- LEFT: inputs -->
+          <div>
+            <label for="category">What would you like to order? *</label>
+            <select id="category" required>
+              <option value="">Choose a category...</option>
+              <option value="crochet">Crochet Item</option>
+              <option value="vinyl">Vinyl Item</option>
+              <option value="3d">3D Item</option>
+            </select>
+
+            <label for="item">Choose an item *</label>
+            <select id="item" disabled>
+              <option>Choose a category first</option>
+            </select>
+
+            <div class="row" style="margin-bottom:6px">
+              <div class="col">
+                <label for="qty">Quantity</label>
+                <input id="qty" type="number" min="1" value="1" />
+              </div>
+              <div style="width:140px">
+                <label for="unitPrice">Unit price (R) — optional</label>
+                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="e.g. 150" />
+              </div>
+            </div>
+
+            <!-- Vinyl-specific inputs (price per cm) -->
+            <div id="vinylBox" style="display:none;margin-bottom:8px">
+              <label style="margin-bottom:6px">Vinyl pricing (per cm)</label>
+              <div class="vinyl-controls">
+                <input id="vinylPerCm" type="number" min="0" step="0.01" placeholder="R per cm (e.g. 1.25)" />
+                <input id="vinylWidth" type="number" min="0" step="0.1" placeholder="Width in cm (e.g. 15)" />
+              </div>
+              <div class="muted-note">If both fields are filled, unit price will be calculated as (price per cm × width). You can still edit unit price manually.</div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <button id="addBtn" type="button" class="ghost" style="flex:1">Add to order</button>
+              <button id="clearBtn" type="button" class="ghost">Clear</button>
+            </div>
+
+            <label for="customText">Additional information (colours, names, personalisation, gift notes)</label>
+            <textarea id="customText" placeholder="E.g., pastel yellow, add name 'Lila', gift wrap please..."></textarea>
+
+            <label for="name">Your name *</label>
+            <input id="name" required placeholder="Full name" />
+
+            <label for="custPhone">Contact phone for delivery *</label>
+            <input id="custPhone" required placeholder="082 555 1234" />
+
+            <label for="email">Email (optional)</label>
+            <input id="email" type="email" placeholder="name@example.com" />
+
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <input type="checkbox" id="hasImage" />
+              <label for="hasImage" class="muted">I have images / designs to share (attach them in WhatsApp)</label>
+            </div>
+
+            <div class="btns">
+              <button class="primary" id="sendBtn" type="submit">Send order to WhatsApp</button>
+              <button id="copyBtn" type="button" class="ghost">Copy message</button>
+            </div>
+
+            <div id="preview" class="preview" style="display:none" aria-live="polite"></div>
+
+            <p class="muted-note">After pressing Send you'll be redirected to WhatsApp Web or the WhatsApp app — please attach any images and press <strong>Send</strong> to complete the order.</p>
+          </div>
+
+          <!-- RIGHT: cart and gallery -->
+          <aside>
+            <h3 style="margin:0 0 8px;color:var(--accent)">Your order</h3>
+            <div class="cart" id="cartBox">
+              <div id="emptyCart" class="muted">No items yet — add items using the form on the left.</div>
+              <div id="cartItems"></div>
+              <div id="cartTotals" class="total" style="display:none">Subtotal: R0.00</div>
+
+              <!-- Estimate note displayed near the subtotal -->
+              <div id="priceNote" class="price-note" style="display:none">
+                <em>Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing.</em>
+              </div>
+            </div>
+
+            <h4 style="margin-top:12px;margin-bottom:6px">Samples</h4>
+            <div class="mini-gallery" id="miniGallery">
+              <div class="mini"><img src="images/small-items.png" alt="crochet sample 1" /></div>
+              <div class="mini"><img src="images/big-items.png" alt="crochet sample 2" /></div>
+              <div class="mini"><img src="images/sample_vinyl_1.jpg" alt="vinyl sample" /></div>
+              <div class="mini"><img src="images/sample_3d_1.jpg" alt="3D sample" /></div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label class="muted">Preferred delivery date (optional)</label>
+              <input id="date" type="date" />
+            </div>
+          </aside>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // === SET YOUR WHATSAPP NUMBER HERE (international format, no + or spaces) ===
+    const MY_NUMBER = '27635668069'; // e.g. 27825551234
+
+    // Inventory with pre-filled crochet prices (from your image)
+    const catalog = {
+      crochet: [
+        {name:"Small amigurumi Bee", price:150},
+        {name:"Small amigurumi Penguin", price:150},
+        {name:"Small amigurumi Cow", price:200},
+        {name:"Medium amigurumi Bunny", price:300},
+        {name:"Amigurumi Sunflower Fairy Doll", price:300},
+        {name:"Big amigurumi Cow", price:800},
+        {name:"Big amigurumi Unicron", price:820},
+        {name:"Big amigurumi Bear", price:800},
+        {name:"Baby Lovey (bunny)", price:550},
+        {name:"Other / My own design", price:null}
+      ],
+      vinyl: [
+        {name:"Funny Christmas vinyl tee - adult", price:null},
+        {name:"Custom name vinyl sticker", price:null},
+        {name:"Vinyl mug print", price:null},
+        {name:"Small vinyl ornament", price:null},
+        {name:"Other / My own design", price:null}
+      ],
+      '3d': [
+        {name:"3D printed Groot", price:null},
+        {name:"3D printed clickers", price:null},
+        {name:"3D printed funny mug-coaster", price:null},
+        {name:"3D printed laptop stand", price:null},
+        {name:"Other / My own design", price:null}
+      ]
+    };
+
+    // DOM refs
+    const categoryEl = document.getElementById('category');
+    const itemEl = document.getElementById('item');
+    const qtyEl = document.getElementById('qty');
+    const unitEl = document.getElementById('unitPrice');
+    const addBtn = document.getElementById('addBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const cartItemsEl = document.getElementById('cartItems');
+    const emptyCart = document.getElementById('emptyCart');
+    const cartTotals = document.getElementById('cartTotals');
+    const priceNote = document.getElementById('priceNote');
+    const preview = document.getElementById('preview');
+    const copyBtn = document.getElementById('copyBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const hasImage = document.getElementById('hasImage');
+
+    const vinylBox = document.getElementById('vinylBox');
+    const vinylPerCm = document.getElementById('vinylPerCm');
+    const vinylWidth = document.getElementById('vinylWidth');
+
+    let cart = [];
+
+    // populate item dropdown on category change
+    categoryEl.addEventListener('change', function(){
+      const cat = categoryEl.value;
+      itemEl.innerHTML = '';
+      preview.style.display = 'none';
+      unitEl.value = '';
+      vinylPerCm.value = '';
+      vinylWidth.value = '';
+      if(!cat || !catalog[cat]){
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Choose a category first';
+        itemEl.appendChild(opt);
+        itemEl.disabled = true;
+        vinylBox.style.display = 'none';
+        return;
+      }
+      itemEl.disabled = false;
+      const choose = document.createElement('option');
+      choose.value = '';
+      choose.textContent = 'Choose an item...';
+      itemEl.appendChild(choose);
+      catalog[cat].forEach(it => {
+        const opt = document.createElement('option');
+        opt.value = it.name;
+        opt.textContent = it.name + (it.price ? ` — R${Number(it.price).toFixed(0)}` : '');
+        itemEl.appendChild(opt);
+      });
+      vinylBox.style.display = (cat === 'vinyl') ? 'block' : 'none';
+    });
+
+    // prefill price if known
+    itemEl.addEventListener('change', function(){
+      const cat = categoryEl.value;
+      const selected = itemEl.value;
+      if(!cat || !selected){
+        unitEl.value = '';
+        return;
+      }
+      const found = catalog[cat].find(i => i.name === selected);
+      if(found && found.price !== null && found.price !== undefined){
+        unitEl.value = found.price;
+      } else {
+        unitEl.value = '';
+      }
+    });
+
+    function formatR(n){
+      return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function renderCart(){
+      cartItemsEl.innerHTML = '';
+      if(cart.length === 0){
+        emptyCart.style.display = 'block';
+        cartTotals.style.display = 'none';
+        priceNote.style.display = 'none';
+        return;
+      }
+      emptyCart.style.display = 'none';
+      let subtotal = 0;
+      cart.forEach((line, idx) => {
+        const row = document.createElement('div');
+        row.className = 'cart-row';
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        const unitText = (line.unit !== null && line.unit !== undefined && !isNaN(Number(line.unit))) ? ` • R${formatR(Number(line.unit))} ea` : '';
+        desc.innerHTML = `<div style="font-weight:600">${line.item}</div>
+                          <div class="muted">${line.category} • Qty: ${line.qty}${unitText}</div>`;
+        row.appendChild(desc);
+
+        const controls = document.createElement('div');
+        controls.style.display = 'flex';
+        controls.style.gap = '8px';
+        controls.style.alignItems = 'center';
+
+        const edit = document.createElement('button');
+        edit.textContent = 'Edit';
+        edit.className = 'ghost';
+        edit.type = 'button';
+        edit.style.padding = '6px 8px';
+        edit.style.borderRadius = '8px';
+        edit.addEventListener('click', () => {
+          categoryEl.value = line.category;
+          categoryEl.dispatchEvent(new Event('change'));
+          setTimeout(() => {
+            itemEl.value = line.item;
+            itemEl.dispatchEvent(new Event('change'));
+            qtyEl.value = line.qty;
+            unitEl.value = (line.unit!==null && line.unit!==undefined)?line.unit:'';
+            if(line.category === 'vinyl' && line.vinylCalc){
+              vinylPerCm.value = line.vinylCalc.perCm||'';
+              vinylWidth.value = line.vinylCalc.width||'';
+            } else {
+              vinylPerCm.value = '';
+              vinylWidth.value = '';
+            }
+          }, 60);
+        });
+        controls.appendChild(edit);
+
+        const remove = document.createElement('button');
+        remove.textContent = 'Remove';
+        remove.className = 'ghost';
+        remove.type = 'button';
+        remove.style.padding = '6px 8px';
+        remove.style.borderRadius = '8px';
+        remove.addEventListener('click', () => {
+          cart.splice(idx,1);
+          renderCart();
+        });
+        controls.appendChild(remove);
+
+        row.appendChild(controls);
+        cartItemsEl.appendChild(row);
+
+        if(line.unit && !isNaN(Number(line.unit))){
+          subtotal += Number(line.unit) * Number(line.qty);
+        }
+      });
+
+      cartTotals.style.display = 'block';
+      cartTotals.textContent = 'Subtotal: R' + formatR(subtotal);
+      // show estimate note when we have items
+      priceNote.style.display = 'block';
+    }
+
+    addBtn.addEventListener('click', function(){
+      const category = categoryEl.value;
+      const item = itemEl.value;
+      const qty = Number(qtyEl.value) || 1;
+      let unit = unitEl.value ? Number(unitEl.value) : null;
+
+      if(!category || !item){
+        alert('Please select category and item before adding.');
+        return;
+      }
+
+      // If vinyl and both per-cm & width given, compute unit price
+      let vinylCalc = null;
+      if(category === 'vinyl'){
+        const perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
+        const width = vinylWidth.value ? Number(vinylWidth.value) : null;
+        if(perCm !== null && width !== null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0){
+          unit = perCm * width;
+          vinylCalc = {perCm, width};
+        }
+      }
+
+      cart.push({category,item,qty,unit,vinylCalc});
+      renderCart();
+
+      qtyEl.value = '1';
+      unitEl.value = '';
+      vinylPerCm.value = '';
+      vinylWidth.value = '';
+      preview.style.display = 'none';
+    });
+
+    clearBtn.addEventListener('click', function(){
+      categoryEl.value = '';
+      itemEl.innerHTML = '<option>Choose a category first</option>';
+      itemEl.disabled = true;
+      qtyEl.value = '1';
+      unitEl.value = '';
+      vinylPerCm.value = '';
+      vinylWidth.value = '';
+      preview.style.display = 'none';
+    });
+
+    // Build whatsapp message (includes disclaimer)
+    function buildMessage(){
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const details = document.getElementById('customText').value.trim();
+      const date = document.getElementById('date').value;
+
+      const lines = [];
+      lines.push('🧶 *New order — Bee\\'s Craft Hive*');
+      lines.push('');
+      lines.push(`*Name:* ${name || '-'}`);
+      lines.push(`*Contact phone:* ${phone || '-'}`);
+      if(email) lines.push(`*Email:* ${email}`);
+      lines.push('');
+      lines.push('*Order items:*');
+
+      let subtotal = 0;
+      cart.forEach((l, i) => {
+        const unitText = (l.unit !== null && l.unit !== undefined && !isNaN(Number(l.unit))) ? ` — R${formatR(Number(l.unit))} ea` : '';
+        lines.push(`${i+1}. ${l.item} (${l.category}) • Qty: ${l.qty}${unitText}`);
+        if(l.vinylCalc){
+          lines.push(`   (Vinyl calc: ${l.vinylCalc.perCm} R/cm × ${l.vinylCalc.width} cm => R${formatR(l.unit)})`);
+        }
+        if(l.unit && !isNaN(Number(l.unit))){
+          subtotal += Number(l.unit) * Number(l.qty);
+        }
+      });
+
+      if(cart.length === 0){
+        lines.push('- No items added -');
+      }
+
+      lines.push('');
+      if(subtotal > 0) lines.push(`*Subtotal:* R${formatR(subtotal)}`);
+      if(date) lines.push(`*Preferred delivery date:* ${date}`);
+      lines.push('');
+      lines.push('*Details:*');
+      lines.push(details || '-');
+      lines.push('');
+      if(hasImage.checked) lines.push('(Customer indicated they have images/designs to attach — please attach them in the chat)');
+      lines.push('');
+      lines.push('_Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing._');
+      lines.push('');
+      lines.push('Delivery charges are payable by the customer. Please confirm availability and shipping cost. Thank you!');
+      return lines.filter(Boolean).join('\n');
+    }
+
+    function openWhatsApp(message){
+      if(!MY_NUMBER || MY_NUMBER.includes('YOUR_NUMBER_HERE')){
+        alert('Please set your number in the script: replace MY_NUMBER = \"YOUR_NUMBER_HERE\" with your full international number (no + or spaces).');
+        return;
+      }
+      const encoded = encodeURIComponent(message);
+      const url = `https://wa.me/${MY_NUMBER}?text=${encoded}`;
+      window.open(url, '_blank');
+    }
+
+    // copy message
+    const copyBtnEl = document.getElementById('copyBtn');
+    copyBtnEl.addEventListener('click', function(){
+      const msg = buildMessage();
+      preview.style.display = 'block';
+      preview.textContent = msg;
+      navigator.clipboard?.writeText(msg).then(() => {
+        copyBtnEl.textContent = 'Copied!';
+        setTimeout(()=> copyBtnEl.textContent = 'Copy message', 1400);
+      }).catch(()=> {
+        alert('Could not copy automatically — please select the preview text and copy manually.');
+      });
+    });
+
+    // submit -> open whatsapp
+    document.getElementById('orderForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      if(!name || !phone){
+        alert('Please complete your name and contact phone.');
+        return;
+      }
+      const msg = buildMessage();
+      preview.style.display = 'block';
+      preview.textContent = msg;
+      openWhatsApp(msg);
+      setTimeout(()=> {
+        preview.textContent = msg + '\n\n(WhatsApp opened — attach images (if any) and press Send to complete your order.)';
+      },700);
+    });
+
+    // init
+    (function init(){
+      itemEl.disabled = true;
+      const cartItems = JSON.parse(localStorage.getItem('bch_cart') || '[]');
+      if(Array.isArray(cartItems) && cartItems.length){
+        cart = cartItems;
+        renderCart();
+      } else {
+        renderCart();
+      }
+      setInterval(()=> {
+        localStorage.setItem('bch_cart', JSON.stringify(cart));
+      }, 1200);
+    })();
+  </script>
+</body>
+</html>
