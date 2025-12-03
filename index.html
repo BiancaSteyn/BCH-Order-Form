@@ -118,8 +118,7 @@
     <main class="card" role="main">
       <header>
         <div class="logo">
-          <!-- Logo image file you provided -->
-          <img src="images/bch-logo.png" alt="Bee's Craft Hive logo" />
+          <img src="Images/bch-logo.png" alt="Bee's Craft Hive logo" />
         </div>
 
         <div>
@@ -214,10 +213,10 @@
 
             <h4 style="margin-top:12px;margin-bottom:6px">Samples</h4>
             <div class="mini-gallery" id="miniGallery">
-              <div class="mini"><img src="images/small-items.png" alt="crochet sample 1" /></div>
-              <div class="mini"><img src="images/big-items.png" alt="crochet sample 2" /></div>
-              <div class="mini"><img src="images/sample_vinyl_1.jpg" alt="vinyl sample" /></div>
-              <div class="mini"><img src="images/sample_3d_1.jpg" alt="3D sample" /></div>
+              <div class="mini"><img src="Images/small-items.png" alt="crochet sample 1" /></div>
+              <div class="mini"><img src="Images/big-items.png" alt="crochet sample 2" /></div>
+              <div class="mini"><img src="Images/sample_vinyl_1.jpg" alt="vinyl sample" /></div>
+              <div class="mini"><img src="Images/sample_3d_1.jpg" alt="3D sample" /></div>
             </div>
 
             <div style="margin-top:12px">
@@ -232,7 +231,7 @@
 
   <script>
     // === SET YOUR WHATSAPP NUMBER HERE (international format, no + or spaces) ===
-    const MY_NUMBER = '27635668069'; // e.g. 27825551234
+    const MY_NUMBER = '27633568069'; // e.g. 27825551234
 
     // Inventory with pre-filled crochet prices (from your image)
     const catalog = {
@@ -264,291 +263,293 @@
       ]
     };
 
-    // DOM refs
-    const categoryEl = document.getElementById('category');
-    const itemEl = document.getElementById('item');
-    const qtyEl = document.getElementById('qty');
-    const unitEl = document.getElementById('unitPrice');
-    const addBtn = document.getElementById('addBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const cartItemsEl = document.getElementById('cartItems');
-    const emptyCart = document.getElementById('emptyCart');
-    const cartTotals = document.getElementById('cartTotals');
-    const priceNote = document.getElementById('priceNote');
-    const preview = document.getElementById('preview');
-    const copyBtn = document.getElementById('copyBtn');
-    const sendBtn = document.getElementById('sendBtn');
-    const hasImage = document.getElementById('hasImage');
+    // Wait for DOM and use robust population handlers
+    document.addEventListener('DOMContentLoaded', () => {
+      // DOM refs
+      const categoryEl = document.getElementById('category');
+      const itemEl = document.getElementById('item');
+      const qtyEl = document.getElementById('qty');
+      const unitEl = document.getElementById('unitPrice');
+      const addBtn = document.getElementById('addBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const cartItemsEl = document.getElementById('cartItems');
+      const emptyCart = document.getElementById('emptyCart');
+      const cartTotals = document.getElementById('cartTotals');
+      const priceNote = document.getElementById('priceNote');
+      const preview = document.getElementById('preview');
+      const copyBtn = document.getElementById('copyBtn');
+      const sendBtn = document.getElementById('sendBtn');
+      const hasImage = document.getElementById('hasImage');
+      const vinylBox = document.getElementById('vinylBox');
+      const vinylPerCm = document.getElementById('vinylPerCm');
+      const vinylWidth = document.getElementById('vinylWidth');
 
-    const vinylBox = document.getElementById('vinylBox');
-    const vinylPerCm = document.getElementById('vinylPerCm');
-    const vinylWidth = document.getElementById('vinylWidth');
+      if (!categoryEl || !itemEl) {
+        console.error('Category or Item select not found. Check element IDs.');
+        return;
+      }
 
-    let cart = [];
+      let cart = [];
 
-    // populate item dropdown on category change
-    categoryEl.addEventListener('change', function(){
-      const cat = categoryEl.value;
-      itemEl.innerHTML = '';
-      preview.style.display = 'none';
-      unitEl.value = '';
-      vinylPerCm.value = '';
-      vinylWidth.value = '';
-      if(!cat || !catalog[cat]){
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'Choose a category first';
-        itemEl.appendChild(opt);
+      // helper: format currency
+      function formatR(n){
+        return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      }
+
+      // populate item dropdown for category
+      function populateItemsForCategory(cat) {
+        itemEl.innerHTML = '';
+        unitEl.value = '';
+        if (!cat || !catalog[cat]) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'Choose a category first';
+          itemEl.appendChild(opt);
+          itemEl.disabled = true;
+          if (vinylBox) vinylBox.style.display = 'none';
+          return;
+        }
+        itemEl.disabled = false;
+        itemEl.appendChild(new Option('Choose an item...', ''));
+        catalog[cat].forEach(it => {
+          const label = it.name + (it.price ? ` — R${Number(it.price).toFixed(0)}` : '');
+          itemEl.appendChild(new Option(label, it.name));
+        });
+        if (vinylBox) vinylBox.style.display = (cat === 'vinyl') ? 'block' : 'none';
+      }
+
+      // when category changes
+      categoryEl.addEventListener('change', (e) => {
+        populateItemsForCategory(e.target.value);
+        preview.style.display = 'none';
+      });
+
+      // when item changes, prefill unit price if available
+      itemEl.addEventListener('change', () => {
+        const cat = categoryEl.value;
+        const selected = itemEl.value;
+        if (!cat || !selected) {
+          unitEl.value = '';
+          return;
+        }
+        const found = (catalog[cat] || []).find(i => i.name === selected);
+        if (found && found.price != null) unitEl.value = found.price;
+        else unitEl.value = '';
+      });
+
+      // render cart
+      function renderCart(){
+        cartItemsEl.innerHTML = '';
+        if(cart.length === 0){
+          emptyCart.style.display = 'block';
+          cartTotals.style.display = 'none';
+          priceNote.style.display = 'none';
+          return;
+        }
+        emptyCart.style.display = 'none';
+        let subtotal = 0;
+        cart.forEach((line, idx) => {
+          const row = document.createElement('div');
+          row.className = 'cart-row';
+          const desc = document.createElement('div');
+          desc.className = 'desc';
+          const unitText = (line.unit !== null && line.unit !== undefined && !isNaN(Number(line.unit))) ? ` • R${formatR(Number(line.unit))} ea` : '';
+          desc.innerHTML = `<div style="font-weight:600">${line.item}</div>
+                            <div class="muted">${line.category} • Qty: ${line.qty}${unitText}</div>`;
+          row.appendChild(desc);
+
+          const controls = document.createElement('div');
+          controls.style.display = 'flex';
+          controls.style.gap = '8px';
+          controls.style.alignItems = 'center';
+
+          const edit = document.createElement('button');
+          edit.textContent = 'Edit';
+          edit.className = 'ghost';
+          edit.type = 'button';
+          edit.style.padding = '6px 8px';
+          edit.style.borderRadius = '8px';
+          edit.addEventListener('click', () => {
+            categoryEl.value = line.category;
+            categoryEl.dispatchEvent(new Event('change'));
+            setTimeout(() => {
+              itemEl.value = line.item;
+              itemEl.dispatchEvent(new Event('change'));
+              qtyEl.value = line.qty;
+              unitEl.value = (line.unit!==null && line.unit!==undefined)?line.unit:'';
+              if(line.category === 'vinyl' && line.vinylCalc){
+                vinylPerCm.value = line.vinylCalc.perCm||'';
+                vinylWidth.value = line.vinylCalc.width||'';
+              } else {
+                vinylPerCm.value = '';
+                vinylWidth.value = '';
+              }
+            }, 60);
+          });
+          controls.appendChild(edit);
+
+          const remove = document.createElement('button');
+          remove.textContent = 'Remove';
+          remove.className = 'ghost';
+          remove.type = 'button';
+          remove.style.padding = '6px 8px';
+          remove.style.borderRadius = '8px';
+          remove.addEventListener('click', () => {
+            cart.splice(idx,1);
+            renderCart();
+          });
+          controls.appendChild(remove);
+
+          row.appendChild(controls);
+          cartItemsEl.appendChild(row);
+
+          if(line.unit && !isNaN(Number(line.unit))){
+            subtotal += Number(line.unit) * Number(line.qty);
+          }
+        });
+
+        cartTotals.style.display = 'block';
+        cartTotals.textContent = 'Subtotal: R' + formatR(subtotal);
+        priceNote.style.display = 'block';
+      }
+
+      // Add to cart
+      addBtn.addEventListener('click', function(){
+        const category = categoryEl.value;
+        const item = itemEl.value;
+        const qty = Number(qtyEl.value) || 1;
+        let unit = unitEl.value ? Number(unitEl.value) : null;
+
+        if(!category || !item){
+          alert('Please select category and item before adding.');
+          return;
+        }
+
+        // If vinyl and both per-cm & width given, compute unit price
+        let vinylCalc = null;
+        if(category === 'vinyl'){
+          const perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
+          const width = vinylWidth.value ? Number(vinylWidth.value) : null;
+          if(perCm !== null && width !== null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0){
+            unit = perCm * width;
+            vinylCalc = {perCm, width};
+          }
+        }
+
+        cart.push({category,item,qty,unit,vinylCalc});
+        renderCart();
+
+        // reset inputs
+        qtyEl.value = '1';
+        unitEl.value = '';
+        vinylPerCm.value = '';
+        vinylWidth.value = '';
+        preview.style.display = 'none';
+      });
+
+      // Clear form controls
+      clearBtn.addEventListener('click', function(){
+        categoryEl.value = '';
+        itemEl.innerHTML = '<option>Choose a category first</option>';
         itemEl.disabled = true;
-        vinylBox.style.display = 'none';
-        return;
-      }
-      itemEl.disabled = false;
-      const choose = document.createElement('option');
-      choose.value = '';
-      choose.textContent = 'Choose an item...';
-      itemEl.appendChild(choose);
-      catalog[cat].forEach(it => {
-        const opt = document.createElement('option');
-        opt.value = it.name;
-        opt.textContent = it.name + (it.price ? ` — R${Number(it.price).toFixed(0)}` : '');
-        itemEl.appendChild(opt);
-      });
-      vinylBox.style.display = (cat === 'vinyl') ? 'block' : 'none';
-    });
-
-    // prefill price if known
-    itemEl.addEventListener('change', function(){
-      const cat = categoryEl.value;
-      const selected = itemEl.value;
-      if(!cat || !selected){
+        qtyEl.value = '1';
         unitEl.value = '';
-        return;
-      }
-      const found = catalog[cat].find(i => i.name === selected);
-      if(found && found.price !== null && found.price !== undefined){
-        unitEl.value = found.price;
-      } else {
-        unitEl.value = '';
-      }
-    });
+        vinylPerCm.value = '';
+        vinylWidth.value = '';
+        preview.style.display = 'none';
+      });
 
-    function formatR(n){
-      return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-    }
+      // Build message
+      function buildMessage(){
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const details = document.getElementById('customText').value.trim();
+        const date = document.getElementById('date').value;
 
-    function renderCart(){
-      cartItemsEl.innerHTML = '';
-      if(cart.length === 0){
-        emptyCart.style.display = 'block';
-        cartTotals.style.display = 'none';
-        priceNote.style.display = 'none';
-        return;
-      }
-      emptyCart.style.display = 'none';
-      let subtotal = 0;
-      cart.forEach((line, idx) => {
-        const row = document.createElement('div');
-        row.className = 'cart-row';
-        const desc = document.createElement('div');
-        desc.className = 'desc';
-        const unitText = (line.unit !== null && line.unit !== undefined && !isNaN(Number(line.unit))) ? ` • R${formatR(Number(line.unit))} ea` : '';
-        desc.innerHTML = `<div style="font-weight:600">${line.item}</div>
-                          <div class="muted">${line.category} • Qty: ${line.qty}${unitText}</div>`;
-        row.appendChild(desc);
+        const lines = [];
+        lines.push('🧶 *New order — Bee\\'s Craft Hive*');
+        lines.push('');
+        lines.push(`*Name:* ${name || '-'}`);
+        lines.push(`*Contact phone:* ${phone || '-'}`);
+        if(email) lines.push(`*Email:* ${email}`);
+        lines.push('');
+        lines.push('*Order items:*');
 
-        const controls = document.createElement('div');
-        controls.style.display = 'flex';
-        controls.style.gap = '8px';
-        controls.style.alignItems = 'center';
-
-        const edit = document.createElement('button');
-        edit.textContent = 'Edit';
-        edit.className = 'ghost';
-        edit.type = 'button';
-        edit.style.padding = '6px 8px';
-        edit.style.borderRadius = '8px';
-        edit.addEventListener('click', () => {
-          categoryEl.value = line.category;
-          categoryEl.dispatchEvent(new Event('change'));
-          setTimeout(() => {
-            itemEl.value = line.item;
-            itemEl.dispatchEvent(new Event('change'));
-            qtyEl.value = line.qty;
-            unitEl.value = (line.unit!==null && line.unit!==undefined)?line.unit:'';
-            if(line.category === 'vinyl' && line.vinylCalc){
-              vinylPerCm.value = line.vinylCalc.perCm||'';
-              vinylWidth.value = line.vinylCalc.width||'';
-            } else {
-              vinylPerCm.value = '';
-              vinylWidth.value = '';
-            }
-          }, 60);
+        let subtotal = 0;
+        cart.forEach((l, i) => {
+          const unitText = (l.unit !== null && l.unit !== undefined && !isNaN(Number(l.unit))) ? ` — R${formatR(Number(l.unit))} ea` : '';
+          lines.push(`${i+1}. ${l.item} (${l.category}) • Qty: ${l.qty}${unitText}`);
+          if(l.vinylCalc){
+            lines.push(`   (Vinyl calc: ${l.vinylCalc.perCm} R/cm × ${l.vinylCalc.width} cm => R${formatR(l.unit)})`);
+          }
+          if(l.unit && !isNaN(Number(l.unit))){
+            subtotal += Number(l.unit) * Number(l.qty);
+          }
         });
-        controls.appendChild(edit);
 
-        const remove = document.createElement('button');
-        remove.textContent = 'Remove';
-        remove.className = 'ghost';
-        remove.type = 'button';
-        remove.style.padding = '6px 8px';
-        remove.style.borderRadius = '8px';
-        remove.addEventListener('click', () => {
-          cart.splice(idx,1);
-          renderCart();
+        if(cart.length === 0){
+          lines.push('- No items added -');
+        }
+
+        lines.push('');
+        if(subtotal > 0) lines.push(`*Subtotal:* R${formatR(subtotal)}`);
+        if(date) lines.push(`*Preferred delivery date:* ${date}`);
+        lines.push('');
+        lines.push('*Details:*');
+        lines.push(details || '-');
+        lines.push('');
+        if(hasImage.checked) lines.push('(Customer indicated they have images/designs to attach — please attach them in the chat)');
+        lines.push('');
+        lines.push('_Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing._');
+        lines.push('');
+        lines.push('Delivery charges are payable by the customer. Please confirm availability and shipping cost. Thank you!');
+        return lines.filter(Boolean).join('\n');
+      }
+
+      // Open WhatsApp
+      function openWhatsApp(message){
+        if(!MY_NUMBER || MY_NUMBER.includes('YOUR_NUMBER_HERE')){
+          alert('Please set your number in the script: replace MY_NUMBER = "YOUR_NUMBER_HERE" with your full international number (no + or spaces).');
+          return;
+        }
+        const encoded = encodeURIComponent(message);
+        const url = `https://wa.me/${MY_NUMBER}?text=${encoded}`;
+        window.open(url, '_blank');
+      }
+
+      // copy message
+      copyBtn.addEventListener('click', function(){
+        const msg = buildMessage();
+        preview.style.display = 'block';
+        preview.textContent = msg;
+        navigator.clipboard?.writeText(msg).then(() => {
+          copyBtn.textContent = 'Copied!';
+          setTimeout(()=> copyBtn.textContent = 'Copy message', 1400);
+        }).catch(()=> {
+          alert('Could not copy automatically — please select the preview text and copy manually.');
         });
-        controls.appendChild(remove);
-
-        row.appendChild(controls);
-        cartItemsEl.appendChild(row);
-
-        if(line.unit && !isNaN(Number(line.unit))){
-          subtotal += Number(line.unit) * Number(line.qty);
-        }
       });
 
-      cartTotals.style.display = 'block';
-      cartTotals.textContent = 'Subtotal: R' + formatR(subtotal);
-      // show estimate note when we have items
-      priceNote.style.display = 'block';
-    }
-
-    addBtn.addEventListener('click', function(){
-      const category = categoryEl.value;
-      const item = itemEl.value;
-      const qty = Number(qtyEl.value) || 1;
-      let unit = unitEl.value ? Number(unitEl.value) : null;
-
-      if(!category || !item){
-        alert('Please select category and item before adding.');
-        return;
-      }
-
-      // If vinyl and both per-cm & width given, compute unit price
-      let vinylCalc = null;
-      if(category === 'vinyl'){
-        const perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
-        const width = vinylWidth.value ? Number(vinylWidth.value) : null;
-        if(perCm !== null && width !== null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0){
-          unit = perCm * width;
-          vinylCalc = {perCm, width};
+      // submit -> open whatsapp
+      document.getElementById('orderForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        if(!name || !phone){
+          alert('Please complete your name and contact phone.');
+          return;
         }
-      }
-
-      cart.push({category,item,qty,unit,vinylCalc});
-      renderCart();
-
-      qtyEl.value = '1';
-      unitEl.value = '';
-      vinylPerCm.value = '';
-      vinylWidth.value = '';
-      preview.style.display = 'none';
-    });
-
-    clearBtn.addEventListener('click', function(){
-      categoryEl.value = '';
-      itemEl.innerHTML = '<option>Choose a category first</option>';
-      itemEl.disabled = true;
-      qtyEl.value = '1';
-      unitEl.value = '';
-      vinylPerCm.value = '';
-      vinylWidth.value = '';
-      preview.style.display = 'none';
-    });
-
-    // Build whatsapp message (includes disclaimer)
-    function buildMessage(){
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const details = document.getElementById('customText').value.trim();
-      const date = document.getElementById('date').value;
-
-      const lines = [];
-      lines.push('🧶 *New order — Bee\\'s Craft Hive*');
-      lines.push('');
-      lines.push(`*Name:* ${name || '-'}`);
-      lines.push(`*Contact phone:* ${phone || '-'}`);
-      if(email) lines.push(`*Email:* ${email}`);
-      lines.push('');
-      lines.push('*Order items:*');
-
-      let subtotal = 0;
-      cart.forEach((l, i) => {
-        const unitText = (l.unit !== null && l.unit !== undefined && !isNaN(Number(l.unit))) ? ` — R${formatR(Number(l.unit))} ea` : '';
-        lines.push(`${i+1}. ${l.item} (${l.category}) • Qty: ${l.qty}${unitText}`);
-        if(l.vinylCalc){
-          lines.push(`   (Vinyl calc: ${l.vinylCalc.perCm} R/cm × ${l.vinylCalc.width} cm => R${formatR(l.unit)})`);
-        }
-        if(l.unit && !isNaN(Number(l.unit))){
-          subtotal += Number(l.unit) * Number(l.qty);
-        }
+        const msg = buildMessage();
+        preview.style.display = 'block';
+        preview.textContent = msg;
+        openWhatsApp(msg);
+        setTimeout(()=> {
+          preview.textContent = msg + '\n\n(WhatsApp opened — attach images (if any) and press Send to complete your order.)';
+        },700);
       });
 
-      if(cart.length === 0){
-        lines.push('- No items added -');
-      }
-
-      lines.push('');
-      if(subtotal > 0) lines.push(`*Subtotal:* R${formatR(subtotal)}`);
-      if(date) lines.push(`*Preferred delivery date:* ${date}`);
-      lines.push('');
-      lines.push('*Details:*');
-      lines.push(details || '-');
-      lines.push('');
-      if(hasImage.checked) lines.push('(Customer indicated they have images/designs to attach — please attach them in the chat)');
-      lines.push('');
-      lines.push('_Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing._');
-      lines.push('');
-      lines.push('Delivery charges are payable by the customer. Please confirm availability and shipping cost. Thank you!');
-      return lines.filter(Boolean).join('\n');
-    }
-
-    function openWhatsApp(message){
-      if(!MY_NUMBER || MY_NUMBER.includes('YOUR_NUMBER_HERE')){
-        alert('Please set your number in the script: replace MY_NUMBER = \"YOUR_NUMBER_HERE\" with your full international number (no + or spaces).');
-        return;
-      }
-      const encoded = encodeURIComponent(message);
-      const url = `https://wa.me/${MY_NUMBER}?text=${encoded}`;
-      window.open(url, '_blank');
-    }
-
-    // copy message
-    const copyBtnEl = document.getElementById('copyBtn');
-    copyBtnEl.addEventListener('click', function(){
-      const msg = buildMessage();
-      preview.style.display = 'block';
-      preview.textContent = msg;
-      navigator.clipboard?.writeText(msg).then(() => {
-        copyBtnEl.textContent = 'Copied!';
-        setTimeout(()=> copyBtnEl.textContent = 'Copy message', 1400);
-      }).catch(()=> {
-        alert('Could not copy automatically — please select the preview text and copy manually.');
-      });
-    });
-
-    // submit -> open whatsapp
-    document.getElementById('orderForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
-      if(!name || !phone){
-        alert('Please complete your name and contact phone.');
-        return;
-      }
-      const msg = buildMessage();
-      preview.style.display = 'block';
-      preview.textContent = msg;
-      openWhatsApp(msg);
-      setTimeout(()=> {
-        preview.textContent = msg + '\n\n(WhatsApp opened — attach images (if any) and press Send to complete your order.)';
-      },700);
-    });
-
-    // init
-    (function init(){
-      itemEl.disabled = true;
+      // load saved cart if any
       const cartItems = JSON.parse(localStorage.getItem('bch_cart') || '[]');
       if(Array.isArray(cartItems) && cartItems.length){
         cart = cartItems;
@@ -556,10 +557,15 @@
       } else {
         renderCart();
       }
+
+      // persist cart periodically
       setInterval(()=> {
         localStorage.setItem('bch_cart', JSON.stringify(cart));
       }, 1200);
-    })();
+
+      // initial population if category had a value
+      if (categoryEl.value) populateItemsForCategory(categoryEl.value);
+    }); // DOMContentLoaded end
   </script>
 </body>
 </html>
