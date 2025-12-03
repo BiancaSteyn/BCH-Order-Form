@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Order — Bee's Craft Hive</title>
+  <meta name="robots" content="noindex,nofollow" />
 
   <style>
     :root{
@@ -17,6 +18,7 @@
       --card-radius:12px;
       --shadow:0 8px 28px rgba(100,70,170,0.08);
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -26,47 +28,83 @@
       padding:18px;
       -webkit-font-smoothing:antialiased;
     }
+
     .container{max-width:1100px;margin:0 auto}
-    .card{ background:var(--panel); border-radius:var(--card-radius); box-shadow:var(--shadow); padding:18px; overflow:hidden; }
+    .card{
+      background:var(--panel);
+      border-radius:var(--card-radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+      overflow:hidden;
+    }
+
     header{display:flex;gap:12px;align-items:center}
-    .logo{ width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px rgba(139,90,223,0.12); overflow:hidden; flex-shrink:0; }
-    .logo img{ width:100%; height:100%; object-fit:contain; display:block; }
-    @media (min-width:900px){ .logo{ width:64px; height:64px; } }
-    h1{ margin:0; font-size:20px; color:var(--accent); background:var(--bee-yellow-soft); display:inline-block; padding:4px 8px; border-radius:8px; }
-    p.lead{ margin:6px 0 12px; color:var(--muted); font-size:14px }
-    .grid{ display:grid; grid-template-columns:1fr; gap:16px; margin-top:12px }
-    @media (min-width:920px){ .grid{ grid-template-columns:1fr 360px } }
-    label{ display:block; font-size:13px; color:#333; margin-bottom:6px }
-    select,input,textarea{ width:100%; padding:10px; border-radius:10px; border:1px solid rgba(120,90,200,0.06); font-size:15px; margin-bottom:10px; background:white }
-    textarea{ min-height:110px; resize:vertical }
-    .row{ display:flex; gap:8px }
-    .row .col{ flex:1 }
-    .btns{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px }
-    button.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; border:none; padding:12px 14px; border-radius:10px; cursor:pointer; font-weight:700; font-size:15px; box-shadow:0 6px 18px rgba(139,90,223,0.12); }
+    .logo{
+      width:48px;
+      height:48px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 22px rgba(139,90,223,0.12);
+      overflow:hidden;
+      flex-shrink:0;
+    }
+    .logo img{width:100%;height:100%;object-fit:contain;display:block}
+    @media (min-width:900px){ .logo{width:64px;height:64px} }
+
+    h1{
+      margin:0;font-size:20px;color:var(--accent);
+      background:var(--bee-yellow-soft);display:inline-block;padding:4px 8px;border-radius:8px;
+    }
+    p.lead{margin:6px 0 12px;color:var(--muted);font-size:14px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:12px}
+    @media (min-width:920px){ .grid{grid-template-columns:1fr 360px} }
+
+    label{display:block;font-size:13px;color:#333;margin-bottom:6px}
+    select,input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(120,90,200,0.06);font-size:15px;margin-bottom:10px;background:white}
+    textarea{min-height:110px;resize:vertical}
+
+    .row{display:flex;gap:8px}
+    .row .col{flex:1}
+
+    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    button.primary{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:white;border:none;padding:12px 14px;border-radius:10px;cursor:pointer;font-weight:700;font-size:15px;
+      box-shadow:0 6px 18px rgba(139,90,223,0.12);
+    }
     button.primary:hover{ box-shadow:0 10px 28px rgba(247,211,75,0.12); transform:translateY(-1px); }
-    button.ghost{ background:transparent; border:1px solid rgba(120,90,200,0.12); padding:10px 12px; border-radius:10px; cursor:pointer; font-size:14px; }
+    button.ghost{ background:transparent;border:1px solid rgba(120,90,200,0.12);padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px; }
     button.ghost:hover{ border-color:var(--bee-yellow); }
-    .cart{ border-radius:10px; padding:10px; background:#fff; border:1px dashed var(--bee-yellow); }
-    .cart-row{ display:flex; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid #faf7fb }
-    .cart-row:last-child{ border-bottom:0 }
-    .cart-row .desc{ flex:1 }
-    .muted{ color:var(--muted); font-size:13px }
-    .total{ font-weight:700; font-size:16px; margin-top:8px }
-    .preview{ background:#fff; border-radius:8px; padding:12px; margin-top:12px; border:1px dashed rgba(120,90,200,0.06); font-family:"Courier New",monospace; white-space:pre-wrap; font-size:14px }
-    .vinyl-controls{ display:grid; grid-template-columns:1fr 1fr; gap:8px }
-    @media (max-width:420px){ .vinyl-controls{ grid-template-columns:1fr } }
-    .mini-gallery{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
-    .mini{ width:72px; height:72px; border-radius:10px; background:var(--bee-yellow-soft); display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid rgba(120,90,200,0.06) }
-    .mini img{ width:100%; height:100%; object-fit:cover }
-    .muted-note{ font-size:13px; color:var(--muted); margin-top:10px }
-    .price-note{ font-style:italic; font-size:13px; color:var(--muted); margin-top:6px }
+
+    .cart{ border-radius:10px;padding:10px;background:#fff;border:1px dashed var(--bee-yellow); }
+    .cart-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #faf7fb}
+    .cart-row:last-child{border-bottom:0}
+    .cart-row .desc{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+    .total{font-weight:700;font-size:16px;margin-top:8px}
+
+    .preview{background:#fff;border-radius:8px;padding:12px;margin-top:12px;border:1px dashed rgba(120,90,200,0.06);font-family:"Courier New",monospace;white-space:pre-wrap;font-size:14px}
+
+    .vinyl-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    @media (max-width:420px){ .vinyl-controls{grid-template-columns:1fr} }
+
+    .mini-gallery{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .mini{width:72px;height:72px;border-radius:10px;background:var(--bee-yellow-soft);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(120,90,200,0.06)}
+    .mini img{width:100%;height:100%;object-fit:cover}
+
+    .muted-note{font-size:13px;color:var(--muted);margin-top:10px}
+    .price-note{font-style:italic;font-size:13px;color:var(--muted);margin-top:6px}
   </style>
 </head>
 <body>
   <div class="container">
     <main class="card" role="main">
       <header>
-        <div class="logo"><img src="Images/bch-logo.png" alt="Bee's Craft Hive logo" /></div>
+        <div class="logo"><img src="Images/bch-logo.png" alt="Bee's Craft Hive logo"></div>
         <div>
           <h1>Welcome to Bee's Craft Hive</h1>
           <p class="lead">Handmade crochet, vinyl & 3D printed goodies — let’s place your order!</p>
@@ -92,19 +130,19 @@
             <div class="row" style="margin-bottom:6px">
               <div class="col">
                 <label for="qty">Quantity</label>
-                <input id="qty" type="number" min="1" value="1" />
+                <input id="qty" type="number" min="1" value="1">
               </div>
               <div style="width:140px">
                 <label for="unitPrice">Unit price (R) — optional</label>
-                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="e.g. 150" />
+                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="e.g. 150">
               </div>
             </div>
 
             <div id="vinylBox" style="display:none;margin-bottom:8px">
               <label style="margin-bottom:6px">Vinyl pricing (per cm)</label>
               <div class="vinyl-controls">
-                <input id="vinylPerCm" type="number" min="0" step="0.01" placeholder="R per cm (e.g. 1.25)" />
-                <input id="vinylWidth" type="number" min="0" step="0.1" placeholder="Width in cm (e.g. 15)" />
+                <input id="vinylPerCm" type="number" min="0" step="0.01" placeholder="R per cm (e.g. 1.25)">
+                <input id="vinylWidth" type="number" min="0" step="0.1" placeholder="Width in cm (e.g. 15)">
               </div>
               <div class="muted-note">If both fields are filled, unit price will be calculated as (price per cm × width). You can still edit unit price manually.</div>
             </div>
@@ -118,16 +156,16 @@
             <textarea id="customText" placeholder="E.g., pastel yellow, add name 'Lila', gift wrap please..."></textarea>
 
             <label for="name">Your name *</label>
-            <input id="name" required placeholder="Full name" />
+            <input id="name" required placeholder="Full name">
 
             <label for="custPhone">Contact phone for delivery *</label>
-            <input id="custPhone" required placeholder="082 555 1234" />
+            <input id="custPhone" required placeholder="082 555 1234">
 
             <label for="email">Email (optional)</label>
-            <input id="email" type="email" placeholder="name@example.com" />
+            <input id="email" type="email" placeholder="name@example.com">
 
             <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-              <input type="checkbox" id="hasImage" />
+              <input type="checkbox" id="hasImage">
               <label for="hasImage" class="muted">I have images / designs to share (attach them in WhatsApp)</label>
             </div>
 
@@ -155,15 +193,15 @@
 
             <h4 style="margin-top:12px;margin-bottom:6px">Samples</h4>
             <div class="mini-gallery" id="miniGallery">
-              <div class="mini"><img src="Images/small-items.png" alt="crochet sample 1" /></div>
-              <div class="mini"><img src="Images/big-items.png" alt="crochet sample 2" /></div>
-              <div class="mini"><img src="Images/sample_vinyl_1.jpg" alt="vinyl sample" /></div>
-              <div class="mini"><img src="Images/sample_3d_1.jpg" alt="3D sample" /></div>
+              <div class="mini"><img src="Images/small-items.png" alt="crochet sample 1"></div>
+              <div class="mini"><img src="Images/big-items.png" alt="crochet sample 2"></div>
+              <div class="mini"><img src="Images/sample_vinyl_1.jpg" alt="vinyl sample"></div>
+              <div class="mini"><img src="Images/sample_3d_1.jpg" alt="3D sample"></div>
             </div>
 
             <div style="margin-top:12px">
               <label class="muted">Preferred delivery date (optional)</label>
-              <input id="date" type="date" />
+              <input id="date" type="date">
             </div>
           </aside>
         </div>
@@ -172,320 +210,299 @@
   </div>
 
   <script>
-    (function(){
-      try {
-        // YOUR NUMBER
-        const MY_NUMBER = '27635668069';
+    // YOUR WHATSAPP NUMBER:
+    const MY_NUMBER = "27635668069";
 
-        // Inventory
-        const catalog = {
-          crochet: [
-            {name:"Small amigurumi Bee", price:150},
-            {name:"Small amigurumi Penguin", price:150},
-            {name:"Small amigurumi Cow", price:200},
-            {name:"Medium amigurumi Bunny", price:300},
-            {name:"Amigurumi Sunflower Fairy Doll", price:300},
-            {name:"Big amigurumi Cow", price:800},
-            {name:"Big amigurumi Unicron", price:820},
-            {name:"Big amigurumi Bear", price:800},
-            {name:"Baby Lovey (bunny)", price:550},
-            {name:"Other / My own design", price:null}
-          ],
-          vinyl: [
-            {name:"Funny Christmas vinyl tee - adult", price:null},
-            {name:"Custom name vinyl sticker", price:null},
-            {name:"Vinyl mug print", price:null},
-            {name:"Small vinyl ornament", price:null},
-            {name:"Other / My own design", price:null}
-          ],
-          '3d': [
-            {name:"3D printed Groot", price:null},
-            {name:"3D printed clickers", price:null},
-            {name:"3D printed funny mug-coaster", price:null},
-            {name:"3D printed laptop stand", price:null},
-            {name:"Other / My own design", price:null}
-          ]
-        };
+    // Simple/catalog matching the test page (prices prefilled for crochet)
+    const catalog = {
+      crochet: [
+        {name: "Small amigurumi Bee", price:150},
+        {name: "Small amigurumi Penguin", price:150},
+        {name: "Small amigurumi Cow", price:200},
+        {name: "Medium amigurumi Bunny", price:300},
+        {name: "Amigurumi Sunflower Fairy Doll", price:300},
+        {name: "Big amigurumi Cow", price:800},
+        {name: "Big amigurumi Unicron", price:820},
+        {name: "Big amigurumi Bear", price:800},
+        {name: "Baby Lovey (bunny)", price:550},
+        {name: "Other / My own design", price:null}
+      ],
+      vinyl: [
+        {name:"Funny Christmas vinyl tee - adult", price:null},
+        {name:"Custom name vinyl sticker", price:null},
+        {name:"Vinyl mug print", price:null},
+        {name:"Small vinyl ornament", price:null},
+        {name:"Other / My own design", price:null}
+      ],
+      "3d": [
+        {name:"3D printed Groot", price:null},
+        {name:"3D printed clickers", price:null},
+        {name:"3D printed funny mug-coaster", price:null},
+        {name:"3D printed laptop stand", price:null},
+        {name:"Other / My own design", price:null}
+      ]
+    };
 
-        // DOM ready
-        document.addEventListener('DOMContentLoaded', function(){
-          // element refs
-          const categoryEl = document.getElementById('category');
-          const itemEl = document.getElementById('item');
-          const qtyEl = document.getElementById('qty');
-          const unitEl = document.getElementById('unitPrice');
-          const addBtn = document.getElementById('addBtn');
-          const clearBtn = document.getElementById('clearBtn');
-          const cartItemsEl = document.getElementById('cartItems');
-          const emptyCart = document.getElementById('emptyCart');
-          const cartTotals = document.getElementById('cartTotals');
-          const priceNote = document.getElementById('priceNote');
-          const preview = document.getElementById('preview');
-          const copyBtn = document.getElementById('copyBtn');
-          const sendBtn = document.getElementById('sendBtn');
-          const hasImage = document.getElementById('hasImage');
-          const vinylBox = document.getElementById('vinylBox');
-          const vinylPerCm = document.getElementById('vinylPerCm');
-          const vinylWidth = document.getElementById('vinylWidth');
+    // Minimal, proven dropdown logic (same as test page) + full page handlers
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("Order page script running");
+      const categoryEl = document.getElementById("category");
+      const itemEl = document.getElementById("item");
+      const qtyEl = document.getElementById("qty");
+      const unitEl = document.getElementById("unitPrice");
+      const addBtn = document.getElementById("addBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const cartItemsEl = document.getElementById("cartItems");
+      const emptyCart = document.getElementById("emptyCart");
+      const cartTotals = document.getElementById("cartTotals");
+      const priceNote = document.getElementById("priceNote");
+      const preview = document.getElementById("preview");
+      const copyBtn = document.getElementById("copyBtn");
+      const vinylBox = document.getElementById("vinylBox");
+      const vinylPerCm = document.getElementById("vinylPerCm");
+      const vinylWidth = document.getElementById("vinylWidth");
+      const hasImage = document.getElementById("hasImage");
 
-          // safety checks
-          if (!categoryEl || !itemEl) {
-            console.error('Missing required selects: category or item');
-            alert('Setup error: required form elements missing. Check HTML.');
-            return;
-          }
-
-          console.log('catalog keys:', Object.keys(catalog).join(', '));
-          let cart = [];
-
-          function formatR(n){
-            return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-          }
-
-          function populateItemsForCategory(cat) {
-            console.log('populateItemsForCategory ->', cat);
-            itemEl.innerHTML = '';
-            unitEl.value = '';
-            if (!cat || !catalog[cat]) {
-              itemEl.appendChild(new Option('Choose a category first',''));
-              itemEl.disabled = true;
-              if (vinylBox) vinylBox.style.display = 'none';
-              return;
-            }
-            itemEl.disabled = false;
-            itemEl.appendChild(new Option('Choose an item...', ''));
-            catalog[cat].forEach(function(it){
-              const label = it.name + (it.price ? ' — R' + Number(it.price).toFixed(0) : '');
-              itemEl.appendChild(new Option(label, it.name));
-            });
-            if (vinylBox) vinylBox.style.display = (cat === 'vinyl') ? 'block' : 'none';
-            console.log('added', catalog[cat].length, 'items for', cat);
-          }
-
-          categoryEl.addEventListener('change', function(e){
-            populateItemsForCategory(e.target.value);
-            preview.style.display = 'none';
-          });
-
-          itemEl.addEventListener('change', function(){
-            var cat = categoryEl.value;
-            var selected = itemEl.value;
-            console.log('item changed ->', cat, selected);
-            if (!cat || !selected) { unitEl.value = ''; return; }
-            var found = (catalog[cat] || []).find(function(i){ return i.name === selected; });
-            if (found && found.price != null) unitEl.value = found.price;
-            else unitEl.value = '';
-          });
-
-          function renderCart(){
-            cartItemsEl.innerHTML = '';
-            if (cart.length === 0) {
-              emptyCart.style.display = 'block';
-              cartTotals.style.display = 'none';
-              priceNote.style.display = 'none';
-              return;
-            }
-            emptyCart.style.display = 'none';
-            var subtotal = 0;
-            cart.forEach(function(line, idx){
-              var row = document.createElement('div');
-              row.className = 'cart-row';
-              var desc = document.createElement('div');
-              desc.className = 'desc';
-              var unitText = (line.unit !== null && line.unit !== undefined && !isNaN(Number(line.unit))) ? ' • R' + formatR(Number(line.unit)) + ' ea' : '';
-              desc.innerHTML = '<div style="font-weight:600">' + line.item + '</div><div class="muted">' + line.category + ' • Qty: ' + line.qty + unitText + '</div>';
-              row.appendChild(desc);
-
-              var controls = document.createElement('div');
-              controls.style.display = 'flex';
-              controls.style.gap = '8px';
-              controls.style.alignItems = 'center';
-
-              var edit = document.createElement('button');
-              edit.textContent = 'Edit';
-              edit.className = 'ghost';
-              edit.type = 'button';
-              edit.style.padding = '6px 8px';
-              edit.style.borderRadius = '8px';
-              edit.addEventListener('click', function(){
-                categoryEl.value = line.category;
-                categoryEl.dispatchEvent(new Event('change'));
-                setTimeout(function(){
-                  itemEl.value = line.item;
-                  itemEl.dispatchEvent(new Event('change'));
-                  qtyEl.value = line.qty;
-                  unitEl.value = (line.unit !== null && line.unit !== undefined) ? line.unit : '';
-                  if (line.category === 'vinyl' && line.vinylCalc) {
-                    vinylPerCm.value = line.vinylCalc.perCm || '';
-                    vinylWidth.value = line.vinylCalc.width || '';
-                  } else {
-                    vinylPerCm.value = '';
-                    vinylWidth.value = '';
-                  }
-                }, 60);
-              });
-              controls.appendChild(edit);
-
-              var remove = document.createElement('button');
-              remove.textContent = 'Remove';
-              remove.className = 'ghost';
-              remove.type = 'button';
-              remove.style.padding = '6px 8px';
-              remove.style.borderRadius = '8px';
-              remove.addEventListener('click', function(){
-                cart.splice(idx, 1);
-                renderCart();
-              });
-              controls.appendChild(remove);
-
-              row.appendChild(controls);
-              cartItemsEl.appendChild(row);
-
-              if (line.unit && !isNaN(Number(line.unit))) { subtotal += Number(line.unit) * Number(line.qty); }
-            });
-
-            cartTotals.style.display = 'block';
-            cartTotals.textContent = 'Subtotal: R' + formatR(subtotal);
-            priceNote.style.display = 'block';
-          }
-
-          addBtn.addEventListener('click', function(){
-            var category = categoryEl.value;
-            var item = itemEl.value;
-            var qty = Number(qtyEl.value) || 1;
-            var unit = unitEl.value ? Number(unitEl.value) : null;
-
-            if (!category || !item) { alert('Please select category and item before adding.'); return; }
-
-            var vinylCalc = null;
-            if (category === 'vinyl') {
-              var perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
-              var width = vinylWidth.value ? Number(vinylWidth.value) : null;
-              if (perCm !== null && width !== null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0) {
-                unit = perCm * width;
-                vinylCalc = { perCm: perCm, width: width };
-              }
-            }
-
-            cart.push({ category: category, item: item, qty: qty, unit: unit, vinylCalc: vinylCalc });
-            renderCart();
-
-            qtyEl.value = '1';
-            unitEl.value = '';
-            vinylPerCm.value = '';
-            vinylWidth.value = '';
-            preview.style.display = 'none';
-          });
-
-          clearBtn.addEventListener('click', function(){
-            categoryEl.value = '';
-            itemEl.innerHTML = '<option>Choose a category first</option>';
-            itemEl.disabled = true;
-            qtyEl.value = '1';
-            unitEl.value = '';
-            vinylPerCm.value = '';
-            vinylWidth.value = '';
-            preview.style.display = 'none';
-          });
-
-          function buildMessage(){
-            var name = document.getElementById('name').value.trim();
-            var phone = document.getElementById('custPhone').value.trim();
-            var email = document.getElementById('email').value.trim();
-            var details = document.getElementById('customText').value.trim();
-            var date = document.getElementById('date').value;
-
-            var lines = [];
-            lines.push('🧶 *New order — Bee\\'s Craft Hive*');
-            lines.push('');
-            lines.push('*Name:* ' + (name || '-'));
-            lines.push('*Contact phone:* ' + (phone || '-'));
-            if (email) lines.push('*Email:* ' + email);
-            lines.push('');
-            lines.push('*Order items:*');
-
-            var subtotal = 0;
-            cart.forEach(function(l, i){
-              var unitText = (l.unit !== null && l.unit !== undefined && !isNaN(Number(l.unit))) ? ' — R' + formatR(Number(l.unit)) + ' ea' : '';
-              lines.push((i+1) + '. ' + l.item + ' (' + l.category + ') • Qty: ' + l.qty + unitText);
-              if (l.vinylCalc) {
-                lines.push('   (Vinyl calc: ' + l.vinylCalc.perCm + ' R/cm × ' + l.vinylCalc.width + ' cm => R' + formatR(l.unit) + ')');
-              }
-              if (l.unit && !isNaN(Number(l.unit))) subtotal += Number(l.unit) * Number(l.qty);
-            });
-
-            if (cart.length === 0) lines.push('- No items added -');
-
-            lines.push('');
-            if (subtotal > 0) lines.push('*Subtotal:* R' + formatR(subtotal));
-            if (date) lines.push('*Preferred delivery date:* ' + date);
-            lines.push('');
-            lines.push('*Details:*');
-            lines.push(details || '-');
-            lines.push('');
-            if (hasImage && hasImage.checked) lines.push('(Customer indicated they have images/designs to attach — please attach them in the chat)');
-            lines.push('');
-            lines.push('_Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing._');
-            lines.push('');
-            lines.push('Delivery charges are payable by the customer. Please confirm availability and shipping cost. Thank you!');
-
-            return lines.filter(Boolean).join('\n');
-          }
-
-          function openWhatsApp(message){
-            if (!MY_NUMBER || typeof MY_NUMBER !== 'string') {
-              alert('WhatsApp number not set correctly in the script.');
-              return;
-            }
-            var encoded = encodeURIComponent(message);
-            var url = 'https://wa.me/' + MY_NUMBER + '?text=' + encoded;
-            window.open(url, '_blank');
-          }
-
-          copyBtn.addEventListener('click', function(){
-            try {
-              var msg = buildMessage();
-              preview.style.display = 'block';
-              preview.textContent = msg;
-              if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(msg).then(function(){ copyBtn.textContent = 'Copied!'; setTimeout(function(){ copyBtn.textContent = 'Copy message' },1400); });
-              } else {
-                alert('Copy not supported — please select the preview text and copy manually.');
-              }
-            } catch (err) {
-              console.error('Copy error', err);
-            }
-          });
-
-          document.getElementById('orderForm').addEventListener('submit', function(e){
-            e.preventDefault();
-            var name = document.getElementById('name').value.trim();
-            var phone = document.getElementById('custPhone').value.trim();
-            if (!name || !phone) { alert('Please complete your name and contact phone.'); return; }
-            var msg = buildMessage();
-            preview.style.display = 'block';
-            preview.textContent = msg;
-            openWhatsApp(msg);
-            setTimeout(function(){ preview.textContent = msg + '\n\n(WhatsApp opened — attach images (if any) and press Send to complete your order.)'; },700);
-          });
-
-          // load saved cart
-          var saved = JSON.parse(localStorage.getItem('bch_cart') || '[]');
-          if (Array.isArray(saved) && saved.length) { cart = saved; renderCart(); } else { renderCart(); }
-
-          // persist cart
-          setInterval(function(){ localStorage.setItem('bch_cart', JSON.stringify(cart)); }, 1200);
-
-          // initial populate (if any)
-          if (categoryEl.value) populateItemsForCategory(categoryEl.value);
-        }); // DOMContentLoaded
-      } catch (err) {
-        console.error('Initialization error:', err);
-        alert('An unexpected error occurred. Check the console for details.');
-        var preview = document.getElementById('preview');
-        if (preview) { preview.style.display = 'block'; preview.textContent = 'Initialization error: ' + (err && err.message ? err.message : String(err)); }
+      if (!categoryEl || !itemEl) {
+        console.error("Missing category/item selects");
+        return;
       }
-    })();
+
+      // helper
+      function formatR(n) {
+        return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      }
+
+      // populate items
+      function populate(cat) {
+        itemEl.innerHTML = "";
+        unitEl.value = "";
+        if (!cat || !catalog[cat]) {
+          itemEl.appendChild(new Option("Choose a category first", ""));
+          itemEl.disabled = true;
+          if (vinylBox) vinylBox.style.display = "none";
+          return;
+        }
+        itemEl.disabled = false;
+        itemEl.appendChild(new Option("Choose an item...", ""));
+        catalog[cat].forEach(function (it) {
+          const label = it.name + (it.price ? " — R" + Number(it.price).toFixed(0) : "");
+          itemEl.appendChild(new Option(label, it.name));
+        });
+        if (vinylBox) vinylBox.style.display = (cat === "vinyl") ? "block" : "none";
+        console.log("populated", cat, "->", catalog[cat].length, "items");
+      }
+
+      // attach
+      categoryEl.addEventListener("change", function (e) { populate(e.target.value); preview.style.display = "none"; });
+      itemEl.addEventListener("change", function () {
+        const cat = categoryEl.value;
+        const sel = itemEl.value;
+        if (!cat || !sel) { unitEl.value = ""; return; }
+        const found = (catalog[cat] || []).find(function (x) { return x.name === sel; });
+        if (found && found.price != null) unitEl.value = found.price; else unitEl.value = "";
+      });
+
+      // cart data
+      let cart = [];
+
+      function renderCart(){
+        cartItemsEl.innerHTML = "";
+        if (!cart.length) {
+          emptyCart.style.display = "block";
+          cartTotals.style.display = "none";
+          priceNote.style.display = "none";
+          return;
+        }
+        emptyCart.style.display = "none";
+        let subtotal = 0;
+        cart.forEach(function (line, idx) {
+          const row = document.createElement("div");
+          row.className = "cart-row";
+          const desc = document.createElement("div");
+          desc.className = "desc";
+          const unitText = (line.unit != null && !isNaN(Number(line.unit))) ? " • R" + formatR(Number(line.unit)) + " ea" : "";
+          desc.innerHTML = "<div style='font-weight:600'>" + line.item + "</div><div class='muted'>" + line.category + " • Qty: " + line.qty + unitText + "</div>";
+          row.appendChild(desc);
+
+          const controls = document.createElement("div");
+          controls.style.display = "flex";
+          controls.style.gap = "8px";
+          controls.style.alignItems = "center";
+
+          const edit = document.createElement("button");
+          edit.textContent = "Edit";
+          edit.type = "button";
+          edit.className = "ghost";
+          edit.style.padding = "6px 8px";
+          edit.style.borderRadius = "8px";
+          edit.addEventListener("click", function(){
+            categoryEl.value = line.category;
+            categoryEl.dispatchEvent(new Event("change"));
+            setTimeout(function(){
+              itemEl.value = line.item;
+              itemEl.dispatchEvent(new Event("change"));
+              qtyEl.value = line.qty;
+              unitEl.value = (line.unit != null) ? line.unit : "";
+              if (line.category === "vinyl" && line.vinylCalc) {
+                vinylPerCm.value = line.vinylCalc.perCm || "";
+                vinylWidth.value = line.vinylCalc.width || "";
+              } else {
+                vinylPerCm.value = "";
+                vinylWidth.value = "";
+              }
+            }, 60);
+          });
+          controls.appendChild(edit);
+
+          const remove = document.createElement("button");
+          remove.textContent = "Remove";
+          remove.type = "button";
+          remove.className = "ghost";
+          remove.style.padding = "6px 8px";
+          remove.style.borderRadius = "8px";
+          remove.addEventListener("click", function(){
+            cart.splice(idx,1);
+            renderCart();
+          });
+          controls.appendChild(remove);
+
+          row.appendChild(controls);
+          cartItemsEl.appendChild(row);
+
+          if (line.unit && !isNaN(Number(line.unit))) subtotal += Number(line.unit) * Number(line.qty);
+        });
+
+        cartTotals.style.display = "block";
+        cartTotals.textContent = "Subtotal: R" + formatR(subtotal);
+        priceNote.style.display = "block";
+      }
+
+      // add & clear
+      addBtn.addEventListener("click", function(){
+        const category = categoryEl.value;
+        const item = itemEl.value;
+        const qty = Number(qtyEl.value) || 1;
+        let unit = unitEl.value ? Number(unitEl.value) : null;
+        if (!category || !item) { alert("Please select category and item before adding."); return; }
+
+        let vinylCalc = null;
+        if (category === "vinyl") {
+          const perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
+          const width = vinylWidth.value ? Number(vinylWidth.value) : null;
+          if (perCm != null && width != null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0) {
+            unit = perCm * width;
+            vinylCalc = { perCm: perCm, width: width };
+          }
+        }
+
+        cart.push({category:category, item:item, qty:qty, unit:unit, vinylCalc:vinylCalc});
+        renderCart();
+        qtyEl.value = "1";
+        unitEl.value = "";
+        vinylPerCm.value = "";
+        vinylWidth.value = "";
+        preview.style.display = "none";
+      });
+
+      clearBtn.addEventListener("click", function(){
+        categoryEl.value = "";
+        itemEl.innerHTML = "<option>Choose a category first</option>";
+        itemEl.disabled = true;
+        qtyEl.value = "1";
+        unitEl.value = "";
+        vinylPerCm.value = "";
+        vinylWidth.value = "";
+        preview.style.display = "none";
+      });
+
+      // message builder
+      function buildMessage(){
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const details = document.getElementById("customText").value.trim();
+        const date = document.getElementById("date").value;
+
+        const lines = [];
+        lines.push("🧶 *New order — Bee's Craft Hive*");
+        lines.push("");
+        lines.push("*Name:* " + (name || "-"));
+        lines.push("*Contact phone:* " + (phone || "-"));
+        if (email) lines.push("*Email:* " + email);
+        lines.push("");
+        lines.push("*Order items:*");
+
+        let subtotal = 0;
+        cart.forEach(function(l, i){
+          const unitText = (l.unit != null && !isNaN(Number(l.unit))) ? " — R" + formatR(Number(l.unit)) + " ea" : "";
+          lines.push((i+1) + ". " + l.item + " (" + l.category + ") • Qty: " + l.qty + unitText);
+          if (l.vinylCalc) lines.push("   (Vinyl calc: " + l.vinylCalc.perCm + " R/cm × " + l.vinylCalc.width + " cm => R" + formatR(l.unit) + ")");
+          if (l.unit && !isNaN(Number(l.unit))) subtotal += Number(l.unit) * Number(l.qty);
+        });
+
+        if (!cart.length) lines.push("- No items added -");
+
+        lines.push("");
+        if (subtotal > 0) lines.push("*Subtotal:* R" + formatR(subtotal));
+        if (date) lines.push("*Preferred delivery date:* " + date);
+        lines.push("");
+        lines.push("*Details:*");
+        lines.push(details || "-");
+        lines.push("");
+        if (hasImage && hasImage.checked) lines.push("(Customer indicated they have images/designs to attach — please attach them in the chat)");
+        lines.push("");
+        lines.push("_Estimated pricing is provided for guidance only and is subject to change. The seller reserves the right to confirm the final price prior to invoicing._");
+        lines.push("");
+        lines.push("Delivery charges are payable by the customer. Please confirm availability and shipping cost. Thank you!");
+        return lines.filter(Boolean).join("\n");
+      }
+
+      // open whatsapp
+      function openWhatsApp(msg){
+        if (!MY_NUMBER || typeof MY_NUMBER !== "string") { alert("WhatsApp number is not configured."); return; }
+        const encoded = encodeURIComponent(msg);
+        const url = "https://wa.me/" + MY_NUMBER + "?text=" + encoded;
+        window.open(url, "_blank");
+      }
+
+      // copy button
+      copyBtn.addEventListener("click", function(){
+        try {
+          const m = buildMessage();
+          preview.style.display = "block";
+          preview.textContent = m;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(m).then(function(){ copyBtn.textContent = "Copied!"; setTimeout(function(){ copyBtn.textContent = "Copy message"; },1400); });
+          } else {
+            alert("Copy not supported — select the preview text and copy manually.");
+          }
+        } catch (err) {
+          console.error("copy error", err);
+        }
+      });
+
+      // submit
+      document.getElementById("orderForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+        if (!name || !phone) { alert("Please complete your name and contact phone."); return; }
+        const msg = buildMessage();
+        preview.style.display = "block";
+        preview.textContent = msg;
+        openWhatsApp(msg);
+        setTimeout(function(){ preview.textContent = msg + "\n\n(WhatsApp opened — attach images (if any) and press Send to complete your order.)"; },700);
+      });
+
+      // restore cart
+      const saved = JSON.parse(localStorage.getItem("bch_cart") || "[]");
+      if (Array.isArray(saved) && saved.length) { cart = saved; renderCart(); } else { renderCart(); }
+      setInterval(function(){ localStorage.setItem("bch_cart", JSON.stringify(cart)); }, 1200);
+
+      // initial populate (safe)
+      if (categoryEl.value) populate(categoryEl.value);
+    }); // DOMContentLoaded end
   </script>
 </body>
 </html>
