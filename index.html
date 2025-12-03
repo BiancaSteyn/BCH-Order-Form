@@ -67,6 +67,14 @@
     select,input,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(120,90,200,0.06);font-size:15px;margin-bottom:10px;background:white}
     textarea{min-height:110px;resize:vertical}
 
+    /* style for readonly unit price (looks disabled but readable) */
+    input[readonly]{
+      background:#faf7ff;
+      color:#222;
+      border:1px solid rgba(120,90,200,0.06);
+      cursor:not-allowed;
+    }
+
     .row{display:flex;gap:8px}
     .row .col{flex:1}
 
@@ -133,8 +141,9 @@
                 <input id="qty" type="number" min="1" value="1">
               </div>
               <div style="width:140px">
-                <label for="unitPrice">Unit price (R) — optional</label>
-                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="e.g. 150">
+                <label for="unitPrice">Unit price (R)</label>
+                <!-- made readonly so users cannot edit -->
+                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="—" readonly>
               </div>
             </div>
 
@@ -144,7 +153,7 @@
                 <input id="vinylPerCm" type="number" min="0" step="0.01" placeholder="R per cm (e.g. 1.25)">
                 <input id="vinylWidth" type="number" min="0" step="0.1" placeholder="Width in cm (e.g. 15)">
               </div>
-              <div class="muted-note">If both fields are filled, unit price will be calculated as (price per cm × width). You can still edit unit price manually.</div>
+              <div class="muted-note">If both fields are filled, unit price will be calculated as (price per cm × width). You cannot change the unit price manually.</div>
             </div>
 
             <div style="display:flex;gap:8px;margin-bottom:8px">
@@ -213,7 +222,7 @@
     // YOUR WHATSAPP NUMBER:
     const MY_NUMBER = "27635668069";
 
-    // Simple/catalog matching the test page (prices prefilled for crochet)
+    // catalog with crochet prices
     const catalog = {
       crochet: [
         {name: "Small amigurumi Bee", price:150},
@@ -243,13 +252,12 @@
       ]
     };
 
-    // Minimal, proven dropdown logic (same as test page) + full page handlers
     document.addEventListener("DOMContentLoaded", function () {
-      console.log("Order page script running");
+      console.log("Order page script running (unit price readonly)");
       const categoryEl = document.getElementById("category");
       const itemEl = document.getElementById("item");
       const qtyEl = document.getElementById("qty");
-      const unitEl = document.getElementById("unitPrice");
+      const unitEl = document.getElementById("unitPrice"); // readonly input
       const addBtn = document.getElementById("addBtn");
       const clearBtn = document.getElementById("clearBtn");
       const cartItemsEl = document.getElementById("cartItems");
@@ -263,17 +271,15 @@
       const vinylWidth = document.getElementById("vinylWidth");
       const hasImage = document.getElementById("hasImage");
 
-      if (!categoryEl || !itemEl) {
-        console.error("Missing category/item selects");
+      if (!categoryEl || !itemEl || !unitEl) {
+        console.error("Missing essential elements (category/item/unit)");
         return;
       }
 
-      // helper
       function formatR(n) {
         return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
       }
 
-      // populate items
       function populate(cat) {
         itemEl.innerHTML = "";
         unitEl.value = "";
@@ -290,20 +296,39 @@
           itemEl.appendChild(new Option(label, it.name));
         });
         if (vinylBox) vinylBox.style.display = (cat === "vinyl") ? "block" : "none";
-        console.log("populated", cat, "->", catalog[cat].length, "items");
       }
 
-      // attach
       categoryEl.addEventListener("change", function (e) { populate(e.target.value); preview.style.display = "none"; });
+
       itemEl.addEventListener("change", function () {
         const cat = categoryEl.value;
         const sel = itemEl.value;
         if (!cat || !sel) { unitEl.value = ""; return; }
         const found = (catalog[cat] || []).find(function (x) { return x.name === sel; });
-        if (found && found.price != null) unitEl.value = found.price; else unitEl.value = "";
+        if (found && found.price != null) {
+          // write into readonly field — user cannot change manually
+          unitEl.value = found.price;
+        } else {
+          unitEl.value = "";
+        }
       });
 
-      // cart data
+      // When vinyl per-cm or width changes, compute unit price and write to readonly field
+      if (vinylPerCm && vinylWidth) {
+        function computeVinylUnit() {
+          const per = parseFloat(vinylPerCm.value);
+          const w = parseFloat(vinylWidth.value);
+          if (!isNaN(per) && !isNaN(w) && per > 0 && w > 0) {
+            const calc = per * w;
+            unitEl.value = Number(calc).toFixed(2);
+            return calc;
+          }
+          return null;
+        }
+        vinylPerCm.addEventListener("input", computeVinylUnit);
+        vinylWidth.addEventListener("input", computeVinylUnit);
+      }
+
       let cart = [];
 
       function renderCart(){
@@ -378,11 +403,11 @@
         priceNote.style.display = "block";
       }
 
-      // add & clear
       addBtn.addEventListener("click", function(){
         const category = categoryEl.value;
         const item = itemEl.value;
         const qty = Number(qtyEl.value) || 1;
+        // unit value is taken from readonly unitEl.value (already filled by catalog or vinyl calc)
         let unit = unitEl.value ? Number(unitEl.value) : null;
         if (!category || !item) { alert("Please select category and item before adding."); return; }
 
@@ -390,7 +415,7 @@
         if (category === "vinyl") {
           const perCm = vinylPerCm.value ? Number(vinylPerCm.value) : null;
           const width = vinylWidth.value ? Number(vinylWidth.value) : null;
-          if (perCm != null && width != null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0) {
+          if (perCm !== null && width !== null && !isNaN(perCm) && !isNaN(width) && perCm > 0 && width > 0) {
             unit = perCm * width;
             vinylCalc = { perCm: perCm, width: width };
           }
@@ -399,6 +424,7 @@
         cart.push({category:category, item:item, qty:qty, unit:unit, vinylCalc:vinylCalc});
         renderCart();
         qtyEl.value = "1";
+        // clear readonly display until next selection
         unitEl.value = "";
         vinylPerCm.value = "";
         vinylWidth.value = "";
@@ -416,7 +442,6 @@
         preview.style.display = "none";
       });
 
-      // message builder
       function buildMessage(){
         const name = document.getElementById("name").value.trim();
         const phone = document.getElementById("custPhone").value.trim();
@@ -458,7 +483,6 @@
         return lines.filter(Boolean).join("\n");
       }
 
-      // open whatsapp
       function openWhatsApp(msg){
         if (!MY_NUMBER || typeof MY_NUMBER !== "string") { alert("WhatsApp number is not configured."); return; }
         const encoded = encodeURIComponent(msg);
@@ -466,7 +490,6 @@
         window.open(url, "_blank");
       }
 
-      // copy button
       copyBtn.addEventListener("click", function(){
         try {
           const m = buildMessage();
@@ -482,7 +505,6 @@
         }
       });
 
-      // submit
       document.getElementById("orderForm").addEventListener("submit", function(e){
         e.preventDefault();
         const name = document.getElementById("name").value.trim();
@@ -500,7 +522,7 @@
       if (Array.isArray(saved) && saved.length) { cart = saved; renderCart(); } else { renderCart(); }
       setInterval(function(){ localStorage.setItem("bch_cart", JSON.stringify(cart)); }, 1200);
 
-      // initial populate (safe)
+      // initial populate
       if (categoryEl.value) populate(categoryEl.value);
     }); // DOMContentLoaded end
   </script>
