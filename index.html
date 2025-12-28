@@ -186,7 +186,7 @@
                 <input id="unitPrice" type="number" min="0" step="0.01" placeholder="—" readonly>
               </div>
             </div>
-
+<!--
             <div id="vinylBox" style="display:none;margin-bottom:8px">
               <label style="margin-bottom:6px">Vinyl pricing (per cm)</label>
               <div class="vinyl-controls">
@@ -195,7 +195,7 @@
               </div>
               <div class="muted-note">If both fields are filled, unit price will be calculated as (price per cm × width). You cannot change the unit price manually.</div>
             </div>
-
+-->
             <div style="display:flex;gap:8px;margin-bottom:8px">
               <!-- standout add button (emoji added) -->
               <button id="addBtn" type="button" style="flex:1">✨ Add to order</button>
@@ -290,16 +290,35 @@
       ],
       vinyl: [
         {name:"Funny Christmas vinyl tee - adult", price:null},
+        {name:"Funny Christmas vinyl tee - child", price:null},
         {name:"Custom name vinyl sticker", price:null},
         {name:"Vinyl mug print", price:null},
         {name:"Small vinyl ornament", price:null},
         {name:"Other / My own design", price:null}
       ],
       "3d": [
-        {name:"3D printed Groot", price:null},
-        {name:"3D printed clickers", price:null},
-        {name:"3D printed funny mug-coaster", price:null},
-        {name:"3D printed laptop stand", price:null},
+        {name:"Urban Baby Groot", price:160},
+        {name:"Urban Scooby-Doo", price:200},
+        {name:"Urban Elmer Fudd", price:250},
+        {name:"Urban Donald Duck", price:200},
+        {name:"Urban Sylvester", price:200},
+        {name:"Urban Goofy", price:200},
+        {name:"Urban Daffy Duck", price:200},
+        {name:"Urban Angry Mickey Mouse", price:160},
+        {name:"Urban Mario", price:200},
+        {name:"Urban Luigi", price:200},
+        {name:"Urban Bugs Bunny", price:250},
+        {name:"Stitch Key Chain 8cm", price:40},
+        {name:"Stitch Key Chain 13cm", price:60},
+        {name:"Stitch Face Key Chain", price:30},
+        {name:"Angel Face Key Chain", price:30},
+        {name:"Stitch Fidget Key Chain", price:40},
+        {name:"Sunflower Fidget Key Chain", price:40},
+        {name:"6-7 Clicker Key Chain", price:30/40},
+        {name:"Starfish Key Chain", price:30},
+        {name:"Spiral Tetradecahedron Fidget", price:50},
+        {name:"Spiral Hourglass Fidget", price:50},
+        {name:"Spiral Cone Fidget", price:50},
         {name:"Other / My own design", price:null}
       ]
     };
@@ -313,6 +332,33 @@
       "Amigurumi Sunflower Fairy Doll": "sunflower-fairy-doll.png",
       "Big amigurumi Cow": "big-cow.png",
       "Big amigurumi Bear": "big-teddy.png"
+      // others will fallback to Images/small-items.png
+    };
+
+        // mapping to your image filenames inside 'Images/' (capital I)
+    const imageMap = {
+        "Urban Baby Groot": "3d-groots.png",
+        "Urban Scooby-Doo": "3d-scoobydo.png",
+        "Urban Elmer Fudd": "3d-elmer-fudd.png",
+        "Urban Donald Duck": "ed-donald-duck.png",
+        "Urban Sylvester": "3d-sylvester.png",
+        "Urban Goofy": "3d-goofy.png",
+        "Urban Daffy Duck": "3d-daffy-duck.png",
+        "Urban Angry Mickey Mouse": "3d-angry-micky.png",
+        "Urban Mario"" "3d-mario.png", 
+        "Urban Luigi": "3d-luigi.png",
+        "Urban Bugs Bunny": "3d-bugs-bunny.png", 
+        "Stitch Key Chain 8cm": "3d-stitch-keychain.png", 
+        "Stitch Key Chain 13cm": "3d-stitch-keychain.png",
+        "Stitch Face Key Chain": "3d-stitch-face-keychain.png", 
+        "Angel Face Key Chain": "3d-angel-face-keychain.png", 
+        "Stitch Fidget Key Chain": "3d-stitch-clicker.png", 
+        "Sunflower Fidget Key Chain": "3d-sunflower-fidget.png",
+        "6-7 Clicker Key Chain": "3d-67-clickers.png", 
+        "Starfish Key Chain": "3d-star-keychain.png", 
+        "Spiral Tetradecahedron Fidget": "3d-spiral-t-fidget.png", 
+        "Spiral Hourglass Fidget": "3d-spiral-h-fidget.png", 
+        "Spiral Cone Fidget": "3d-spiral-c-fidget.png", 
       // others will fallback to Images/small-items.png
     };
 
